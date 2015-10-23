@@ -6,29 +6,32 @@ var app = express()
 // REDIS
 var client = redis.createClient(6379, '127.0.0.1', {})
 
-// var url = require('url');
-// var url_parts = url.parse(req.url, true);
-// var query = url_parts.query;
 
-// console.log("query:"+query);
 
 ///////////// WEB ROUTES
 
 // Add hook to make it easier to get all visited URLS.
-// app.use(function(req, res, next) 
-// {
-// 	console.log(req.method, req.url);
 
-// 	// ... INSERT HERE.
+app.use(function(req, res, next) 
+{
+	console.log(req.method, req.url);
 
-// 	next(); // Passing the request to the next handler in the stack.
-// });
+	// ... INSERT HERE.
+
+	client.lpush('recentQueue',req.url,function(err,reply){
+
+		console.log(reply)
+	})
+
+	next(); // Passing the request to the next handler in the stack.
+});
 
 app.get('/get',function(req,res){
 
 	console.log("You visited get");
 
 	console.log(req.query);
+
 
 	for(var key in req.query){
 
@@ -46,7 +49,7 @@ app.get('/get',function(req,res){
 		}
 	}
 
-	req.send('You visited get')
+	res.send('You visited get')
 
 })
 
