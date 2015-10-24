@@ -148,13 +148,15 @@ app.get('/set',function(req,res){
 app.post('/upload',[ multer({ dest: './uploads/'}), function(req, res){
    console.log(req.body) // form fields
    console.log(req.files) // form files
-
+   console.log("-----")
    if( req.files.image )
    {
 	   fs.readFile( req.files.image.path, function (err, data) {
 	  		if (err) throw err;
 	  		var img = new Buffer(data).toString('base64');
-	  		console.log(img);
+	  		client.lpush("image",img);	
+	  		// console.log(img);
+	  		console.log("HERO")
 		});
 	}
 
@@ -170,15 +172,47 @@ app.get('/', function(req, res) {
 
 app.get('/meow', function(req, res) {
 	{
-		if (err) throw err
+		// console.log(req);
+
 		res.writeHead(200, {'content-type':'text/html'});
-		items.forEach(function (imagedata) 
-		{
-   		res.write("<h1>\n<img src='data:my_pic.jpg;base64,"+imagedata+"'/>");
-		});
-   	res.end();
+		// res.write("<b>hello hello</b>");
+
+		// console.log("ok ok")
+
+		client.lrange("image",0,1,function(err,items){
+
+			if(err){
+				throw err;
+			}
+
+			items.forEach(function(image){
+				// console.log("ok");
+				res.write("<h1>\n<img src='data:morning.jpg;base64,"+image+"'/>");
+				// res.write("<b> hello hello </b>");
+
+			})
+			res.end();
+		})
+
+
+		// items.forEach(function (imagedata) 
+		// {
+		// 	console.log("ok")
+  //  			res.write("<h1>\n<img src='data:my_pic.jpg;base64,"+imagedata+"'/>");
+  //  			res.write("<b>hello hello</b>");
+		// });
+   	// res.end();
 	}
 })
+
+// app.get('/meow', function(req, res) {
+// 	{
+// 		client.lrange("image",0,1,function(err,items){
+// 			var imagedata=items[0]
+// 			res.send("<h1>\n<img src='data:morning.jpg;base64,"+imagedata+"'/>");
+// 		})
+// 	}
+// })
 
 // HTTP SERVER
 var server = app.listen(3000, function () {
