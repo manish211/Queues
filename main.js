@@ -49,30 +49,32 @@ app.get('/get',function(req,res){
 
 	var outputString;
 
-	for(var key in req.query){
+	if(req.query.keys === undefined){
+		// console.log("req.query exist !!");
 
-		if(req.query.hasOwnProperty(key)){
+		client.get("keyExpire",function(err,value){
 
-			console.log("key name:"+key);
-
-			client.get(key, function(err,value){ 
-			
-					console.log("value of key:"+value);
-
-					outputString = "key="+key+" value="+value ;
-
-					console.log("outputString inside::"+outputString);
-
-					res.send(outputString);
-			})
-
-		}
+			res.send(value);
+		})	
 	}
+	else
+	{
+		for(var key in req.query){
+			console.log("+++++");
+			if(req.query.hasOwnProperty(key)){
 
-	console.log("outputString:"+outputString);
-	
-	// res.send(outputString);
+				client.set(key,req.query[key]);
 
+				var outputString = "key="+key+" value="+req.query[key] ;
+				console.log(outputString);
+				console.log("-----");
+
+
+			}
+		}
+
+		res.send(outputString);
+	}
 })
 
 app.get('/set',function(req,res){
@@ -93,21 +95,41 @@ app.get('/set',function(req,res){
 
 	console.log("req.query: "+req.query);
 
-	for(var key in req.query){
-		console.log("+++++");
-		if(req.query.hasOwnProperty(key)){
+	console.log(req.query.keys)
 
-			client.set(key,req.query[key]);
+	console.log("key length:"+Object.keys(req.query).length)   // the length is 0 if the object does not have any keys or if the object is empty
 
-			var outputString = "key="+key+" value="+req.query[key] ;
-			console.log(outputString);
-			console.log("-----");
+	if(req.query.keys === undefined){
+		// console.log("req.query exist !!");
 
-		}
+		client.get("keyExpire",function(err,value){
+
+			res.send(value);
+		})	
 	}
+	else
+	{
+		for(var key in req.query){
+			console.log("+++++");
+			if(req.query.hasOwnProperty(key)){
+
+				client.set(key,req.query[key]);
+
+				var outputString = "key="+key+" value="+req.query[key] ;
+				console.log(outputString);
+				console.log("-----");
+
+
+			}
+		}
+
+		res.send(outputString);
+	}
+
 	
-console.log("HELLO =======");
-	res.send(outputString);
+	
+// console.log("HELLO =======");
+	// res.send(outputString);
 
 
 	// client.set("key", "value");
