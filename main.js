@@ -26,6 +26,21 @@ app.use(function(req, res, next)
 	next(); // Passing the request to the next handler in the stack.
 });
 
+app.get('/recent',function(req,res){
+
+	
+		// Display all the recently visited sites
+		// Put code here pending
+
+		client.lrange('recentQueue',0,4,function(resp,reply){
+
+			console.log("reply: "+reply);
+
+			res.send(reply);
+		})
+	
+})
+
 app.get('/get',function(req,res){
 
 	console.log("You visited get");
@@ -41,7 +56,7 @@ app.get('/get',function(req,res){
 
 			client.get(key, function(err,value){ 
 			
-			console.log(value);
+			console.log("value of key:"+value);
 
 			
 			})
