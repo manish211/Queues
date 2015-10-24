@@ -6,7 +6,7 @@ var app = express()
 // REDIS
 var client = redis.createClient(6379, '127.0.0.1', {})
 
-
+var outputString;
 
 ///////////// WEB ROUTES
 
@@ -47,10 +47,12 @@ app.get('/get',function(req,res){
 
 	console.log(req.query);
 
-	var outputString;
+	
 
-	if(req.query.keys === undefined){
-		// console.log("req.query exist !!");
+	console.log("key length:"+Object.keys(req.query).length)
+
+	if(Object.keys(req.query).length === 0 ){
+		console.log("req.query.keys not found !!");
 
 		client.get("keyExpire",function(err,value){
 
@@ -63,15 +65,20 @@ app.get('/get',function(req,res){
 			console.log("+++++");
 			if(req.query.hasOwnProperty(key)){
 
-				client.set(key,req.query[key]);
+				client.get(key,function(err,value){
 
-				var outputString = "key="+key+" value="+req.query[key] ;
-				console.log(outputString);
-				console.log("-----");
-
-
+					outputString = "key="+key+" value="+value ;
+					console.log(outputString);
+					console.log("-----");
+					// return outputString
+					// res.send(outputString);
+				})
 			}
 		}
+
+		console.log("***** END ***** ");
+
+		console.log(outputString)
 
 		res.send(outputString);
 	}
