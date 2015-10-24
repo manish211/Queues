@@ -47,6 +47,7 @@ app.get('/get',function(req,res){
 
 	console.log(req.query);
 
+	var outputString;
 
 	for(var key in req.query){
 
@@ -56,15 +57,21 @@ app.get('/get',function(req,res){
 
 			client.get(key, function(err,value){ 
 			
-			console.log("value of key:"+value);
+					console.log("value of key:"+value);
 
-			
+					outputString = "key="+key+" value="+value ;
+
+					console.log("outputString inside::"+outputString);
+
+					res.send(outputString);
 			})
 
 		}
 	}
 
-	res.send('You visited get')
+	console.log("outputString:"+outputString);
+	
+	// res.send(outputString);
 
 })
 
@@ -80,11 +87,18 @@ app.get('/set',function(req,res){
 
 	console.log("key="+key);
 
-	for(var key in req.query){
+	client.set("keyExpire","This message will self-destruct in 10 seconds");
 
+	client.expire("keyExpire",10);
+
+	console.log("req.query: "+req.query);
+
+	for(var key in req.query){
+		console.log("+++++");
 		if(req.query.hasOwnProperty(key)){
 
 			client.set(key,req.query[key]);
+
 			var outputString = "key="+key+" value="+req.query[key] ;
 			console.log(outputString);
 			console.log("-----");
@@ -92,6 +106,7 @@ app.get('/set',function(req,res){
 		}
 	}
 	
+console.log("HELLO =======");
 	res.send(outputString);
 
 
