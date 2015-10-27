@@ -14,7 +14,7 @@ var http = require('http'),
 //
 // var proxy = httpProxy.createProxyServer({ target : 'http://localhost:3000' });
 var target_urls = [ "http://localhost:3001", "http://localhost:3002" ];
-var proxy_servers = []
+// var proxy_servers = []
 
 client.del("target_urls",function(){
 
@@ -25,11 +25,11 @@ client.del("target_urls",function(){
 	// }
 
 	for(var i=0; i < target_urls.length - 1; i++){
-		proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
+		// proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
 		client.lpush("target_urls",target_urls[i])
 	}
 
-	proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
+	// proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
     client.lpush("target_urls",target_urls[i],function(){
 
     	var server = http.createServer(function(req,res){
