@@ -26,27 +26,31 @@ client.del("target_urls",function(){
 
 	for(var i=0; i < target_urls.length - 1; i++){
 		proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
-		client.lpush("target_urls",each_target_url[i])
+		client.lpush("target_urls",target_urls[i])
 	}
 
 	proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
-    client.lpush("target_urls",each_target_url[i])
+    client.lpush("target_urls",target_urls[i],function(){
 
-	var server = http.createServer(function(req,res){
+    	var server = http.createServer(function(req,res){
 
-		client.rpoplpush("target_urls","target_urls",function(err,target_url){
+			client.rpoplpush("target_urls","target_urls",function(err,target_url){
 
-			console.log("target_url is ->"+target_url);
+				console.log("target_url is ->"+target_url);
 
-			var proxy_server = httpProxy.createProxyServer({target : target_url });
+				var proxy_server = httpProxy.createProxyServer({target : target_url });
 
-			proxy_server.web(req,res);
+				proxy_server.web(req,res);
 
-		});// End of rpoplpush callback
+			});// End of rpoplpush callback
 
-	});  // End of server function
+		});  // End of server function
 
-	server.listen(5722);
+		server.listen(5722);
+
+    })
+
+	
 
 }); // End of client.del callback
 
