@@ -242,14 +242,14 @@ app.get('/meow', function(req, res) {
 // })
 
 // HTTP SERVER
-var server = app.listen(3002, function () {
+var server = app.listen(3001, function () {
 
   var host = server.address().address
   console.log("HOST IS="+host);
   var port = server.address().port
 
   client.del("host:port");
-  client.lpush("host:port","localhost:3002");
+  client.lpush("host:port","localhost:3001");
   client.lpush("host:port","localhost:3002");
 
   // client.

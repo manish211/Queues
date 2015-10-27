@@ -14,10 +14,37 @@ var outputString;
 
 app.use(function(req, res, next) 
 {
-	console.log(req.method, req.url);
+	// console.log(req.method, req.url);
+	// console.log("=====");
+	// console.log(req.method);  //prints GET
+	// console.log("======");
+	// console.log(req.url);	  // prints /recent
+	// process.exit();
 
 	// ... INSERT HERE.
 
+	console.dir(req.headers);
+
+	client.rpoplpush("host:port","host:port",function(err,resp){
+
+		if(err){
+			throw err;
+		}
+		else
+		{
+			console.log("INSIDE");	
+			console.log("response from rpoplplush:"+resp);
+			console.dir(req.headers);
+			console.log(req.headers.host);
+			req.headers.host = resp;
+			console.log("AFTER MODIFICATION:"+req.headers.host);
+
+		}
+
+	})
+
+	console.log("OUTSIDE MODIFICATION:="+req.headers.host);
+	
 	client.lpush('recentQueue',req.url,function(err,reply){
 
 		console.log(reply)
@@ -218,7 +245,14 @@ app.get('/meow', function(req, res) {
 var server = app.listen(3000, function () {
 
   var host = server.address().address
+  console.log("HOST IS="+host);
   var port = server.address().port
+
+  client.del("host:port");
+  client.lpush("host:port","localhost:3001");
+  client.lpush("host:port","localhost:3002");
+
+  // client.
 
   console.log('Example app listening at http://%s:%s', host, port)
 })
