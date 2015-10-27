@@ -13,7 +13,13 @@ var http = require('http'),
 // Create a proxy server with custom application logic
 //
 // var proxy = httpProxy.createProxyServer({ target : 'http://localhost:3000' });
-var proxy;
+var target_urls = [ "http://localhost:3001", "http://localhost:3002" ];
+var proxy_servers = []
+
+//Create proxy servers for each target url
+for (each_target_url in proxy_servers){
+	proxy_servers.push(http.createServer({target:each_target_url}));
+}
 //
 // Create your custom server and just call `proxy.web()` to proxy
 // a web request to the target passed in the options
@@ -23,7 +29,22 @@ var server = http.createServer(function(req, res) {
   // You can define here your custom logic to handle the request
   // and then proxy the request.
 
-  client.rpoplpush("host:port","host:port",function(err,resp){
+  client.del("host:port");
+  client.lpush("host:port","http://localhost:3001");
+  client.lpush("host:port","http://localhost:3002");
+
+
+  
+});
+
+console.log("listening on port 5722")
+server.listen(5722, function () {
+
+	  var host = server.address().address
+	  console.log("HOST IS="+host);
+	  var port = server.address().port
+
+	client.rpoplpush("host:port","host:port",function(err,resp){
 
 		if(err){
 			throw err;
@@ -39,19 +60,6 @@ var server = http.createServer(function(req, res) {
 		}
 
 	})
-  
-});
-
-console.log("listening on port 5722")
-server.listen(5722, function () {
-
-  var host = server.address().address
-  console.log("HOST IS="+host);
-  var port = server.address().port
-
-  client.del("host:port");
-  client.lpush("host:port","http://localhost:3001");
-  client.lpush("host:port","http://localhost:3002");
 
   // client.
 
