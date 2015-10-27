@@ -21,8 +21,7 @@ for (each_target_url in proxy_servers){
 	proxy_servers.push(httpProxy.createProxyServer({target:each_target_url}));
 }
 
+var server = http.createServer();
 
+server.listen(5722);
 
-
-  console.log('Example app listening at http://%s:%s', host, port)
-})
