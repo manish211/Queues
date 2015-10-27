@@ -14,9 +14,7 @@ var target_urls = [ "http://localhost:3001", "http://localhost:3002" ];
 
 client.del("target_urls",function(){
 
-
 	for(var i=0; i < target_urls.length - 1; i++){
-		// proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
 		client.lpush("target_urls",target_urls[i])
 	}
 
