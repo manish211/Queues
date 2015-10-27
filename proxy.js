@@ -16,12 +16,40 @@ var http = require('http'),
 var target_urls = [ "http://localhost:3001", "http://localhost:3002" ];
 var proxy_servers = []
 
-//Create proxy servers for each target url
-for (each_target_url in proxy_servers){
-	proxy_servers.push(httpProxy.createProxyServer({target:each_target_url}));
-}
+client.del("target_urls",function(){
 
-var server = http.createServer();
+	// Create proxy servers for each target url
+	// for (each_target_url in proxy_servers){
+	// 	proxy_servers.push(httpProxy.createProxyServer({target:each_target_url}));
+	// 	client.lpush("target_urls",each_target_url)
+	// }
 
-server.listen(5722);
+	for(var i=0; i < target_urls.length - 1; i++){
+		proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
+		client.lpush("target_urls",each_target_url[i])
+	}
+
+	proxy_servers.push(httpProxy.createProxyServer({target:target_urls[i]}));
+    client.lpush("target_urls",each_target_url[i])
+
+	var server = http.createServer(function(req,res){
+
+		client.rpoplpush("target_urls","target_urls",function(err,target_url){
+
+			console.log("target_url is ->"+target_url);
+
+			var proxy_server = httpProxy.createProxyServer({target : target_url });
+
+			proxy_server.web(req,res);
+
+		});// End of rpoplpush callback
+
+	});  // End of server function
+
+	server.listen(5722);
+
+}); // End of client.del callback
+
+
+
 
